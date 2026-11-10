@@ -1,0 +1,310 @@
+/* ============================================================
+   NJ BLACK CROW — v4 · Identity: black / red
+   Idea: the background (Mosul) is the hero. Text lives in a side panel
+   on desktop (left) and at the bottom on mobile, keeping the landmark visible
+   ============================================================ */
+@font-face{font-family:"IBM Plex Sans Arabic";src:url(fonts/IBMPlexSansArabic-Regular.woff) format("woff");font-weight:400;font-display:swap}
+@font-face{font-family:"IBM Plex Sans Arabic";src:url(fonts/IBMPlexSansArabic-Bold.woff) format("woff");font-weight:700;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(fonts/JetBrainsMonowght.woff) format("woff");font-weight:100 800;font-display:swap}
+
+:root{
+  --void:#070708; --coal:#0d0d10; --line:rgba(237,237,240,.14); --ash:#a3a3ab; --bone:#ededf0;
+  --blood:#e01122; --ember:#ff4324; --rust:#7c0a14; --glow:rgba(224,17,34,.55);
+  --scrim:6,3,4;
+  color-scheme:dark;
+  --gutter:clamp(18px,4vw,56px);
+  --panel:min(36vw,560px);
+  --f-display:"IBM Plex Sans Arabic",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Arabic",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:auto}
+html,body{background:var(--void);color:var(--bone)}
+body{font-family:var(--f-body);line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden;direction:ltr;cursor:none}
+body.no-cursor{cursor:auto}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--blood);color:#fff}
+img,canvas{display:block}
+ol{list-style:none}
+
+/* ---------- المشهد ---------- */
+#stage{position:fixed;inset:0;z-index:0;pointer-events:none}
+#vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(120% 95% at 40% 45%,transparent 55%,rgba(0,0,0,.5) 100%)}
+#grain{position:fixed;inset:-50%;z-index:60;pointer-events:none;opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 6s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}100%{transform:translate(-8%,6%)}}
+
+#cursor{position:fixed;z-index:90;top:0;left:0;width:9px;height:9px;border-radius:50%;background:var(--blood);pointer-events:none;transform:translate(-50%,-50%);box-shadow:0 0 14px var(--glow);transition:width .2s,height .2s,background .2s}
+#cursor.ring{width:46px;height:46px;background:transparent;border:1px solid var(--blood);box-shadow:none}
+#rope{position:fixed;inset:0;z-index:88;pointer-events:none}
+#bar{position:fixed;top:0;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--rust),var(--blood),var(--ember));z-index:80}
+
+/* ---------- الملاحة ---------- */
+header.nav{position:fixed;top:0;inset-inline:0;z-index:70;display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:calc(14px + env(safe-area-inset-top,0px)) var(--gutter) 14px;background:linear-gradient(rgba(0,0,0,.55),transparent)}
+.brandmark{font-family:var(--f-display);font-size:19px;letter-spacing:.5px;white-space:nowrap}
+.brandmark b{color:var(--blood)}
+nav.links{display:flex;gap:24px;font-size:13px}
+nav.links a{opacity:.68;transition:opacity .25s}
+nav.links a:hover{opacity:1}
+.nav-cta{display:none;font-family:var(--f-mono);font-size:11px;letter-spacing:.5px;padding:7px 12px;border:1px solid rgba(224,17,34,.6);border-radius:999px;color:var(--bone);background:rgba(224,17,34,.18)}
+
+/* ---------- HUD الدرون ---------- */
+#hud{position:fixed;z-index:65;right:var(--gutter);align-items:flex-end;text-align:right;bottom:calc(22px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:6px;
+  font-family:var(--f-mono);font-size:11px;color:var(--ash);letter-spacing:.5px;direction:ltr;text-shadow:0 1px 8px #000;pointer-events:none;max-width:calc(100vw - var(--panel) - var(--gutter)*2)}
+#hud .place{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#hud .place i{width:7px;height:7px;border-radius:50%;background:var(--blood);box-shadow:0 0 10px var(--glow);animation:blink 2s infinite}
+#hud .place b{font-family:var(--f-display);font-weight:400;font-size:17px;color:var(--bone);letter-spacing:0}
+#hud .alt b{color:var(--bone);font-weight:500;font-variant-numeric:tabular-nums;margin-inline:4px}
+@keyframes blink{50%{opacity:.25}}
+#route{position:fixed;z-index:65;right:calc(var(--gutter) * .5);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:14px}
+#route li{width:7px;height:7px;border-radius:50%;border:1px solid rgba(237,237,240,.45);cursor:pointer;transition:all .3s}
+#route li.on{background:var(--blood);border-color:var(--blood);box-shadow:0 0 10px var(--glow);transform:scale(1.35)}
+
+/* ---------- المحطات: كل قسم طويل واللوحة ثابتة (sticky) ---------- */
+main{position:relative;z-index:10}
+.st{position:relative;height:270vh}
+.st.tall{height:300vh}
+#hero{height:165vh}
+#finale{height:230vh}
+.pin{position:sticky;top:0;height:100vh;height:100svh;width:var(--panel);
+  display:flex;flex-direction:column;justify-content:center;padding:96px clamp(16px,2vw,32px) 64px var(--gutter);will-change:opacity,transform}
+/* ظل متدرج بدل المربعات: النص يقرا والخلفية تبقى حية */
+.pin::before{content:"";position:absolute;inset:0 -10vw 0 0;z-index:-1;pointer-events:none;
+  background:linear-gradient(to right,rgba(var(--scrim),.86) 0%,rgba(var(--scrim),.72) 52%,rgba(var(--scrim),.3) 80%,rgba(var(--scrim),0) 100%)}
+
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:2px;color:var(--blood);margin-bottom:12px;display:inline-block}
+.h-sec{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,2.7vw,44px);line-height:1.15}
+
+/* البطل: النص تحت يمين والمدينة كلها مكشوفة */
+#hero .pin{width:auto;justify-content:flex-end;padding-bottom:12vh}
+#hero .pin::before{inset:auto 0 0 0;height:62%;background:linear-gradient(to top,rgba(var(--scrim),.8),rgba(var(--scrim),.45) 55%,transparent)}
+.kicker{font-size:15px;color:var(--blood);margin-bottom:6px}
+.kicker .coord{font-family:var(--f-mono);font-size:11px;color:var(--ash);margin-inline-start:10px;letter-spacing:1px}
+#hero h1{font-family:var(--f-display);font-weight:400;line-height:.95;font-size:clamp(56px,min(11vw,17vh),170px)}
+#hero h1 .l2{color:var(--blood)}
+.hero-sub{margin-top:18px;max-width:44ch;color:var(--ash);font-size:clamp(15px,1.4vw,17px)}
+.hero-scroll{margin-top:26px;font-family:var(--f-mono);font-size:11px;letter-spacing:2px;color:var(--ash);display:flex;align-items:center;gap:10px}
+.hero-scroll i{width:1px;height:34px;background:linear-gradient(var(--blood),transparent);display:block;animation:drip 1.8s infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}50.1%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* عنّي */
+.about-text{font-family:var(--f-display);font-size:clamp(24px,2.3vw,38px);line-height:1.4;margin-top:6px}
+.about-text .w{opacity:.14}
+.meta{display:flex;flex-wrap:wrap;gap:28px;margin-top:34px;font-family:var(--f-mono);font-size:12px;color:var(--ash)}
+.meta b{color:var(--bone);display:block;font-size:24px;font-family:var(--f-body);font-weight:700;line-height:1.2;margin-bottom:2px}
+
+/* المشاريع: قائمة نظيفة بخطوط رفيعة، بدون صناديق رمادية */
+.plist{margin-top:22px;border-top:1px solid var(--line)}
+.prow{position:relative;display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:start;padding:12px 0;border-bottom:1px solid var(--line);transition:padding .35s}
+.prow::after{content:"";position:absolute;bottom:-1px;left:0;height:1px;width:0;background:var(--blood);transition:width .45s cubic-bezier(.7,0,.2,1)}
+.prow:hover::after{width:100%}
+.prow:hover{padding-inline-start:6px}
+.pi{font-family:var(--f-mono);font-size:11px;color:var(--blood);padding-top:6px}
+.pm h3{font-family:var(--f-display);font-weight:400;font-size:21px;line-height:1.25;display:inline}
+.pm .tag{font-family:var(--f-mono);font-size:10px;color:var(--ash);letter-spacing:1px;margin-inline-start:10px}
+.pm p{color:var(--ash);font-size:13px;line-height:1.55;margin-top:2px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
+.prow:hover .pm p{-webkit-line-clamp:3}
+.pe{display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-family:var(--f-mono);font-size:10px;letter-spacing:.5px;padding-top:6px;white-space:nowrap}
+.prow.live .state{color:#4ade80}
+.prow.build .state{color:var(--ember)}
+.pe a{color:var(--bone);border-bottom:1px solid var(--blood)}
+.swipe{display:none}
+
+/* السلسلة */
+.chain{margin-top:28px;position:relative;display:flex;flex-direction:column;gap:22px;padding-inline-start:26px}
+.chain::before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:1px;background:linear-gradient(var(--blood),rgba(224,17,34,.15))}
+.chain::after{content:"";position:absolute;left:2px;top:0;width:7px;height:7px;border-radius:50%;background:var(--ember);box-shadow:0 0 12px var(--ember);animation:flow 2.6s cubic-bezier(.6,0,.4,1) infinite}
+@keyframes flow{0%{top:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
+.node{position:relative}
+.node::before{content:"";position:absolute;left:-26px;top:9px;width:11px;height:11px;border-radius:50%;border:1px solid var(--blood);background:var(--void)}
+.node b{display:block;font-family:var(--f-display);font-weight:400;font-size:24px;direction:ltr;text-align:left}
+.node span{color:var(--ash);font-size:14px}
+
+/* الغنائم: أقراص بفيزياء */
+.drag-field{position:relative;height:min(46vh,420px);margin-top:22px;border-bottom:1px solid var(--line);overflow:hidden;touch-action:pan-y}
+.drag-hint{position:absolute;top:8px;inset-inline-start:0;font-family:var(--f-mono);font-size:10px;color:var(--ash);letter-spacing:1px;pointer-events:none}
+.token{position:absolute;left:0;top:0;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px;
+  background:radial-gradient(circle at 35% 30%,#2a1215,#0c0708 70%);border:1px solid rgba(224,17,34,.55);box-shadow:inset 0 0 18px rgba(224,17,34,.18),0 10px 26px rgba(0,0,0,.55);
+  cursor:grab;touch-action:none;user-select:none;will-change:transform;padding:8px}
+.token:active,.token.held{cursor:grabbing;border-color:var(--ember)}
+.token i{width:5px;height:5px;border-radius:50%;background:var(--ember)}
+.token.live i{background:#4ade80}
+.token b{font-family:var(--f-display);font-weight:400;font-size:14px;line-height:1.1}
+.token small{font-family:var(--f-mono);font-size:8px;color:var(--ash);letter-spacing:1px}
+.token.big{background:radial-gradient(circle at 35% 30%,#e01122,#7c0a14 75%);border-color:#ff6a52}
+.token.big b{font-size:12px;font-family:var(--f-mono);font-weight:700}
+.token.big small{color:#ffd0c8}
+
+/* الختام */
+#finale h2{font-family:var(--f-display);font-weight:400;font-size:clamp(44px,5vw,84px);line-height:1}
+#finale p{color:var(--ash);margin-top:14px;max-width:34ch}
+.cta{margin-top:26px;align-self:flex-start;display:inline-flex;align-items:center;padding:15px 30px;border:1px solid var(--blood);border-radius:999px;
+  font-family:var(--f-mono);font-size:13px;letter-spacing:1px;color:var(--bone);background:var(--blood);position:relative;overflow:hidden;cursor:none}
+.cta span{position:relative;z-index:2}
+.cta::after{content:"";position:absolute;inset:0;background:var(--void);transform:translateY(100%);transition:transform .35s cubic-bezier(.7,0,.2,1);z-index:1}
+.cta:hover::after{transform:translateY(0)}
+.qr{margin-top:22px;width:104px;height:104px;background:#fff;border-radius:8px;padding:8px}
+.qr img{width:100%;height:100%}
+footer{margin-top:28px;font-family:var(--f-mono);font-size:10px;color:var(--ash);letter-spacing:.5px}
+
+/* شاشات واطية (لابتوب 720) */
+@media (min-width:761px) and (max-height:800px){
+  .pin{padding-top:78px;padding-bottom:40px}
+  .prow{padding:8px 0}
+  .pm h3{font-size:19px}
+  .about-text{font-size:clamp(22px,2vw,32px)}
+  .qr{display:none}
+}
+
+/* ============================================================
+   Mobile: landmark on top (54%), text panel at the bottom (46%)
+   ============================================================ */
+@media (max-width:760px){
+  :root{--gutter:18px}
+  nav.links{display:none}
+  .nav-cta{display:inline-block}
+  #route{display:none}
+  #hud{left:var(--gutter);right:auto;align-items:flex-start;text-align:left;bottom:auto;top:calc(56px + env(safe-area-inset-top,0px));max-width:calc(100vw - 36px);font-size:10px;gap:2px}
+  #hud .place b{font-size:15px}
+  #hud .place span{display:none}
+  .st{height:250vh}
+  .st.tall{height:280vh}
+  #hero{height:160vh}
+  #finale{height:210vh}
+  .pin{width:auto;margin:0;justify-content:flex-end;padding:0}
+  .pin > *{position:relative}
+  .pin::before{inset:auto 0 0 0;height:calc(46svh + 12svh);background:linear-gradient(to top,rgba(var(--scrim),.92) 0%,rgba(var(--scrim),.84) 72%,rgba(var(--scrim),0) 100%)}
+  /* المحتوى نفسه بحدود 46% تحت */
+  .pin{padding:0 var(--gutter) calc(18px + env(safe-area-inset-bottom,0px))}
+  .pin > :first-child{margin-top:auto}
+  #hero .pin{padding-bottom:calc(9svh + env(safe-area-inset-bottom,0px))}
+  #hero .pin::before{height:58%}
+  #hero h1{font-size:clamp(54px,18vw,86px)}
+  .hero-sub{font-size:14.5px;margin-top:12px}
+  .hero-scroll{margin-top:16px}
+  .h-sec{font-size:24px}
+  .eyebrow{font-size:11px;margin-bottom:6px}
+  .about-text{font-size:21px;line-height:1.45}
+  .meta{gap:22px;margin-top:16px}
+  .meta b{font-size:19px}
+  /* المشاريع: سحب أفقي بدل القائمة الطويلة */
+  .plist{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;border-top:0;margin:14px calc(var(--gutter) * -1) 0;padding:0 var(--gutter) 6px;scrollbar-width:none}
+  .plist::-webkit-scrollbar{display:none}
+  .prow{flex:0 0 74vw;scroll-snap-align:start;grid-template-columns:1fr;gap:6px;padding:12px 0 0;border-bottom:0;border-top:2px solid var(--blood)}
+  .prow::after{display:none}
+  .pi{padding-top:0}
+  .pm h3{display:block;font-size:22px}
+  .pm .tag{margin:0}
+  .pm p{-webkit-line-clamp:3;font-size:13px}
+  .pe{flex-direction:row;align-items:center;justify-content:space-between}
+  .swipe{display:block;font-family:var(--f-mono);font-size:10px;color:var(--ash);margin-top:8px;letter-spacing:1px}
+  .chain{flex-direction:row;padding:22px 0 0;gap:10px;margin-top:12px}
+  .chain::before{right:0;left:0;top:5px;bottom:auto;width:auto;height:1px;background:linear-gradient(to right,var(--blood),rgba(224,17,34,.15))}
+  .chain::after{top:2px;left:0;animation:flowX 2.6s cubic-bezier(.6,0,.4,1) infinite}
+  @keyframes flowX{0%{left:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{left:100%;opacity:0}}
+  .node{flex:1}
+  .node::before{left:0;top:-22px}
+  .node b{font-size:16px}
+  .node span{font-size:11.5px;line-height:1.4;display:block}
+  .focus{display:none}
+  .drag-field{height:min(27svh,230px);margin-top:10px}
+  #finale h2{font-size:48px}
+  #finale p{font-size:14px;margin-top:8px}
+  .cta{margin-top:16px;padding:13px 22px;font-size:12px}
+  .qr{display:none}
+  footer{margin-top:14px}
+}
+
+/* ---------- شاشة التحميل ---------- */
+#loader{animation:loaderOut .6s 9s forwards;position:fixed;inset:0;z-index:100;background:var(--void);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+#loader .lw{font-family:var(--f-display);font-size:30px;color:var(--bone)}
+#loader .lw b{color:var(--blood)}
+#loader .lbar{width:200px;height:2px;background:#24242b;overflow:hidden}
+#loader .lbar i{display:block;height:100%;width:0;background:var(--blood)}
+#loader .lpct{font-family:var(--f-mono);font-size:12px;color:var(--ash)}
+#loader .lnote{font-size:13px;color:var(--ash)}
+@keyframes loaderOut{to{opacity:0;visibility:hidden}}
+body.ready #loader{opacity:0;visibility:hidden;transition:opacity .6s,visibility .6s}
+
+#toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,calc(100% + 60px));z-index:95;background:#141418;border:1px solid var(--blood);border-radius:6px;padding:14px 22px;font-family:var(--f-mono);font-size:13px;color:var(--bone);box-shadow:0 0 30px var(--glow);transition:transform .5s cubic-bezier(.7,0,.2,1);max-width:calc(100vw - 32px)}
+#toast.show{transform:translate(-50%,0)}
+#toast b{color:var(--blood)}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  #grain{display:none}
+}
+
+/* ============================================================
+   English / LTR typography + skills summary
+   ============================================================ */
+.brandmark,#hud .place b,.h-sec,#hero h1,.pm h3,.node b,.token b,#finale h2,#loader .lw{font-weight:700;letter-spacing:-.01em}
+#hero h1{letter-spacing:-.035em;line-height:.98}
+.about-text{font-weight:400;letter-spacing:-.012em;line-height:1.38}
+.about-text .w{display:inline-block}
+.kicker{font-family:var(--f-mono);font-size:12px;letter-spacing:1.5px;text-transform:uppercase}
+.kicker .coord{display:block;margin:6px 0 0;letter-spacing:1px;text-transform:none}
+.hero-sub{line-height:1.6}
+.eyebrow{letter-spacing:2.5px}
+.token b{font-size:13px;line-height:1.15}
+.token.big b{font-size:11px}
+.plus::after{content:"+"}
+.focus{margin-top:22px;border-top:1px solid var(--line);font-size:13.5px;line-height:1.55;color:var(--ash)}
+.focus li{display:grid;grid-template-columns:104px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.focus span{font-family:var(--f-mono);font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blood);padding-top:3px}
+.meta{margin-top:26px}
+@media (min-width:761px) and (max-height:800px){
+  .focus{margin-top:14px;font-size:12.5px}
+  .focus li{padding:6px 0}
+  .meta{margin-top:18px}
+}
+
+/* Projects: full write-up on hover / tap (display only) */
+.prow{cursor:pointer}
+.prow:hover .pm p,.prow.open .pm p{-webkit-line-clamp:unset;display:block}
+@media (max-width:760px){.prow .pm p{-webkit-line-clamp:3}.prow.open .pm p{-webkit-line-clamp:unset;display:block;max-height:30svh;overflow-y:auto}}
+
+/* v6.1 — GitHub links */
+.prow.has-repo{cursor:pointer}
+.prow.has-repo:focus-visible{outline:1px solid var(--blood);outline-offset:4px}
+.prow.repo .state{color:#9ecbff}
+.prow.has-repo:hover h3{color:var(--bone);text-decoration:underline;text-decoration-color:var(--blood);text-underline-offset:5px}
+.node a{display:block;color:inherit}
+.node a span{display:block}
+.node .gh{font-style:normal;font-size:.7em;color:var(--blood);opacity:.8}
+.node a:hover b{text-decoration:underline;text-decoration-color:var(--blood);text-underline-offset:4px}
+.cta.ghost{margin-top:12px;background:transparent;border-color:rgba(255,255,255,.28)}
+.cta.ghost::after{background:var(--blood)}
+
+/* v6.3 — skills matrix */
+.sk-tabs{flex:none;position:relative;display:flex;gap:4px;margin-top:20px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.sk-tabs::-webkit-scrollbar{display:none}
+.sk-tab{flex:none;background:none;border:0;padding:10px 10px 11px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--ash);cursor:pointer;transition:color .3s}
+.sk-tab:hover{color:var(--bone)}
+.sk-tab.on{color:var(--bone)}
+.sk-tab:focus-visible{outline:1px solid var(--blood);outline-offset:-2px}
+.sk-bar{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--blood);transition:transform .45s cubic-bezier(.2,.8,.2,1),width .45s cubic-bezier(.2,.8,.2,1)}
+.sk-grid{min-height:0;overflow-y:auto;scrollbar-width:none;padding-top:2px;display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px;margin-top:14px}
+.sk{position:relative;padding:10px 12px 11px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.015);overflow:hidden;
+  transition:opacity .45s ease,filter .45s ease,border-color .3s,transform .35s cubic-bezier(.2,.8,.2,1)}
+.sk::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s;
+  background:radial-gradient(180px circle at var(--mx,50%) var(--my,50%),rgba(225,17,34,.16),transparent 65%)}
+.sk:hover{border-color:rgba(225,17,34,.45);transform:translateY(-2px)}
+.sk:hover::before{opacity:1}
+.sk.dim{opacity:.16;filter:grayscale(1);transform:none}
+.sk-g{display:block;font-family:var(--f-mono);font-size:9px;letter-spacing:1.3px;text-transform:uppercase;color:var(--blood);margin-bottom:5px}
+.sk b{display:block;font-size:14px;line-height:1.25;color:var(--bone);font-weight:700}
+.sk small{display:block;margin-top:3px;font-size:11.5px;line-height:1.35;color:var(--ash)}
+@media (min-width:761px) and (max-height:760px){.sk{padding:8px 10px}.sk small{display:none}}
+@media (max-width:760px){
+  .sk-tabs{margin-top:10px}
+  .sk-tab{padding:8px 8px 9px;font-size:9.5px;letter-spacing:1px}
+  .sk-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .sk{padding:6px 10px;border-radius:999px}
+  .sk-g,.sk small{display:none}
+  .sk b{font-size:12px;font-weight:600}
+}
+@media (prefers-reduced-motion:reduce){.sk,.sk-bar{transition:none}}

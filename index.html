@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nizar Al-Zubaidi — Security Engineer | NJ</title>
+<meta name="description" content="Nizar Jasim Mohammed Al-Zubaidi — security engineer from Mosul, Iraq. Web and API security research, open-source security tooling (ONYX, IOLITE, Diamond Sword), LLM evaluation (AMP), and production web apps.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Nizar Al-Zubaidi — Security Engineer">
+<meta property="og:description" content="Security engineering, research tooling, and web development. An interactive portfolio flying over Mosul.">
+<meta name="theme-color" content="#070708">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23070708'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23e01122'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/IBMPlexSansArabic-Bold.woff" as="font" type="font/woff" crossorigin>
+<link rel="stylesheet" href="styles.css?v=69">
+<!--
+  Hidden flag: NJBC{view_source_is_where_it_starts}
+  Found it? Send it through the channel.
+-->
+</head>
+<body>
+
+<div id="loader">
+  <div class="lw">NJ</div>
+  <div class="lbar"><i></i></div>
+  <div class="lpct">000%</div>
+</div>
+
+<canvas id="stage" aria-hidden="true"></canvas>
+<div id="vignette"></div>
+<div id="grain"></div>
+<div id="cursor"></div>
+<div id="bar"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<canvas id="rope" aria-hidden="true"></canvas>
+
+<header class="nav">
+  <a class="brandmark" href="#hero" data-hover><span>NJ</span></a>
+  <nav class="links">
+    <a href="#about" data-hover>About</a>
+    <a href="#arsenal" data-hover>Projects</a>
+    <a href="#chain" data-hover>Toolchain</a>
+    <a href="#works" data-hover>Skills</a>
+    <a href="#finale" data-hover>Contact</a>
+    <a href="https://github.com/NizarJasim1" target="_blank" rel="noopener" data-hover>GitHub ↗</a>
+  </nav>
+  <a class="nav-cta" href="https://t.me/Nj777777X" target="_blank" rel="noopener">@Nj777777X</a>
+</header>
+
+<!-- Current drone position -->
+<div id="hud" aria-hidden="true">
+  <div class="place"><i></i><b id="placeName">Mosul Skyline</b><span id="placeCoord">36.3450°N 43.1370°E</span></div>
+  <div class="alt">ALT <b id="altNum">0</b> m</div>
+</div>
+<ol id="route" aria-label="Sections">
+  <li data-go="hero" title="Mosul Skyline"></li>
+  <li data-go="about" title="The Old Bridge"></li>
+  <li data-go="arsenal" title="Great Mosque of Mosul"></li>
+  <li data-go="chain" title="Celebrations Platform"></li>
+  <li data-go="works" title="Prophet Yunus Mosque"></li>
+  <li data-go="finale" title="Al-Hadba Minaret"></li>
+</ol>
+
+<main>
+
+  <!-- 0 · Mosul skyline -->
+  <section id="hero" class="st">
+    <div class="pin">
+      <div class="kicker">Security Engineer · Developer <span class="coord">Mosul, Iraq · 36.34°N 43.13°E</span></div>
+      <h1><span class="l1">Nizar</span> <span class="l2">Al-Zubaidi</span></h1>
+      <p class="hero-sub">I build security tools, test how real systems break, and ship web apps that hold up in production. Scroll to fly over Mosul — each landmark is a chapter of my work.</p>
+      <div class="hero-scroll"><i></i>SCROLL TO EXPLORE</div>
+    </div>
+  </section>
+
+  <!-- 1 · The Old Bridge: About -->
+  <section id="about" class="st">
+    <div class="pin">
+      <span class="eyebrow">01 / ABOUT</span>
+      <p class="about-text" id="aboutText">I’m Nizar Al-Zubaidi, a security engineer from Mosul. I work across web and API security, build my own tools to find and prove the flaws scanners miss, and ship web apps that hold up in production.</p>
+      <ul class="focus">
+        <li><span>Security</span>Web &amp; API security · Access control (BOLA/IDOR, BFLA) · Recon · Security tooling</li>
+        <li><span>Development</span>Python · JavaScript · PHP · Bash · HTML · CSS · Linux</li>
+        <li><span>AI</span>Prompt engineering · AI-assisted research workflows</li>
+      </ul>
+      <div class="meta">
+        <div><b data-count="4" data-k="projects">0</b>Public projects</div>
+        <div><b data-count="1400" class="plus">0</b>Automated tests</div>
+        <div><b data-count="4">0</b>Programming languages</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · Great Mosque of Mosul: Projects -->
+  <section id="arsenal" class="st tall">
+    <div class="pin">
+      <span class="eyebrow">02 / PROJECTS</span>
+      <h2 class="h-sec">Selected work</h2>
+      <ol class="plist" id="projects"></ol>
+      <div class="swipe">← SWIPE</div>
+    </div>
+  </section>
+
+  <!-- 3 · Celebrations Platform: Toolchain -->
+  <section id="chain" class="st">
+    <div class="pin">
+      <span class="eyebrow">03 / TOOLCHAIN</span>
+      <h2 class="h-sec">Three tools, one workflow</h2>
+      <ol class="chain">
+        <li class="node"><a href="https://github.com/NizarJasim1/diamond-sword" target="_blank" rel="noopener" data-hover><b>Diamond Sword <i class="gh">↗</i></b><span>Captures full multi-identity traffic from the target</span></a></li>
+        <li class="node"><a href="https://github.com/NizarJasim1/iolite" target="_blank" rel="noopener" data-hover><b>IOLITE <i class="gh">↗</i></b><span>Maps and ranks the authorization attack surface, hands ONYX a ready spec</span></a></li>
+        <li class="node"><a href="https://github.com/NizarJasim1/Onyx" target="_blank" rel="noopener" data-hover><b>ONYX <i class="gh">↗</i></b><span>Confirms each flaw by state delta, zero false positives, pure Python</span></a></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 4 · Prophet Yunus Mosque: Skills -->
+  <section id="works" class="st">
+    <div class="pin">
+      <span class="eyebrow">04 / SKILLS</span>
+      <h2 class="h-sec">Skills &amp; technologies</h2>
+      <div class="sk-tabs" id="skTabs" role="tablist"><span class="sk-bar"></span></div>
+      <ul class="sk-grid" id="skills"></ul>
+    </div>
+  </section>
+
+  <!-- 5 · Al-Hadba Minaret: Contact -->
+  <section id="finale" class="st">
+    <div class="pin">
+      <span class="eyebrow">05 / CONTACT</span>
+      <h2>Let’s connect</h2>
+      <p>My code lives on GitHub. Arabic cybersecurity tutorials and hands-on projects are on my Telegram channel.</p>
+      <a class="cta" id="cta" href="https://t.me/Nj777777X" target="_blank" rel="noopener" data-hover><span>@Nj777777X → Join the channel</span></a>
+      <a class="cta ghost" href="https://github.com/NizarJasim1" target="_blank" rel="noopener" data-hover><span>GitHub → NizarJasim1</span></a>
+      <div class="qr" title="Scan with your phone camera"><img src="qr.svg" alt="QR code linking to the Telegram channel" width="112" height="112"></div>
+      <footer>© <span id="yr"></span> Nizar Jasim Mohammed Al-Zubaidi · NJ · <span id="flags">🪶 0/3</span></footer>
+    </div>
+  </section>
+
+</main>
+
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/SplitText.min.js"></script>
+<script src="vendor/Draggable.min.js"></script>
+<script src="vendor/InertiaPlugin.min.js"></script>
+<script src="vendor/ScrambleTextPlugin.min.js"></script>
+<script type="module" src="app.js?v=69"></script>
+</body>
+</html>
